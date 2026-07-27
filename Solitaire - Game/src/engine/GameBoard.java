@@ -116,7 +116,7 @@ public class GameBoard {
 
         // waste pile: 3 at ta time
         System.out.print("waste (top 3): ");
-        for (Card c : waste.recentCards()) {
+        for (Card c : waste.getCards()) {
             System.out.print(padVisible(c.toString(), 5));
         }
         System.out.println();

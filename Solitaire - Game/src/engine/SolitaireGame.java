@@ -59,7 +59,8 @@ public class SolitaireGame {
                 Tableau toFlip = pendingFlip;
                 pendingFlip = null;
                 toFlip.flipLastCard();
-                log("Flip: " + /*toFlip.lastCard()*/ "FaceDown Card" + " turned face-up in " + tableauLabel(toFlip));
+                log( /*toFlip.lastCard()*/ "Last face down card is flip up in " +
+                          tableauLabel(toFlip));
                 System.out.println("Display Game Results");
                 continue;
             }
@@ -76,7 +77,7 @@ public class SolitaireGame {
                 board.talon.loadFrom(board.waste);
                 board.waste.clear();
                 board.change = 0;
-                log("Recycle: Waste moved back into Talon");
+                log("Waste moved back into Talon");
                 continue;
             }
 
@@ -122,6 +123,7 @@ public class SolitaireGame {
     // prints a move/flip/draw log line in one consistent format
     private void log(String message) {
         System.out.println("LOG: " + message);
+        System.out.println("---------------------------------------------------------\n");
     }
 
     // "Tab3", or "Waste" if given null (used when a card's source was the waste pile)
@@ -173,7 +175,7 @@ public class SolitaireGame {
                             pendingFlip = sourceTableau;
                         }
                     }
-                    log("Move: " + visibleCard + " moved from " + sourceLabel +
+                    log( visibleCard + " moved from " + sourceLabel +
                             " to " + destLabel);
                     return true;
                 }
@@ -223,12 +225,12 @@ public class SolitaireGame {
                     if (fromWaste) {
                         destination.append(visibleCard);
                         board.waste.removeLast();
-                        log("Move: " + visibleCard + " moved from " + sourceLabel + " to " + destLabel);
+                        log(visibleCard + " moved from " + sourceLabel + " to " + destLabel);
                     } else {
                         List<Card> stack = sourceTableau.visibleStackFrom(visibleCard);
                         sourceTableau.removeStack(stack);
                         destination.appendStack(stack);
-                        log("Move: " + stack + " moved from " + sourceLabel + " to " + destLabel);
+                        log( stack + " moved from " + sourceLabel + " to " + destLabel);
                         if (!sourceTableau.isEmpty() && !sourceTableau.lastCard().isVisible()) {
                             // don't flip yet - that happens on its own round next
                             pendingFlip = sourceTableau;
@@ -249,7 +251,7 @@ public class SolitaireGame {
             board.waste.addCard(c);
             drawnCards.add(c);
         }
-        log("Draw: " + drawnCards + " drawn from Talon to Waste");
+        log( drawnCards + " drawn from Talon to Waste");
     }
 
     private boolean allComparisonsMade() {
