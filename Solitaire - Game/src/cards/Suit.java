@@ -7,10 +7,10 @@ package cards;
  * (instead of black, which is invisible on a dark terminal background).
  */
 public enum Suit {
-    HEARTS("H", "RED"),
-    DIAMONDS("D", "RED"),
-    CLUBS("C", "BLACK"),
-    SPADES("S", "BLACK");
+    HEARTS("♥", "RED"),
+    DIAMONDS("♦", "RED"),
+    CLUBS("♣", "BLACK"),
+    SPADES("♠", "BLACK");
 
     //IntelliJ's built-in run console. color.
     public static final String ANSI_RED = "\u001B[31m";
