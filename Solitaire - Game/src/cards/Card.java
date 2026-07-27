@@ -44,9 +44,9 @@ public class Card {
     @Override
     public String toString() {
         if (!isVisible) {
-            return "[-]";
+            return "[X]";
         }
-        String text = rank.getSymbol() + suit.getSymbol();
+        String text =  rank.getSymbol() + suit.getSymbol(); // makes the card 8H
         // wrap the card text in its ANSI color code, then reset the
         // color afterward so it doesn't bleed into the rest of the line
         return suit.getAnsiCode() + text + Suit.ANSI_RESET;

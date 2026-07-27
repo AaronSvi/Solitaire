@@ -12,8 +12,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
-
- * press enter for next round
+ * SolitaireGame.java
+ * The auto-play engine. Each round pauses for 3 seconds so the moves can
+ * actually be watched - press Enter at any point during that pause to
+ * skip ahead immediately instead of waiting out the full 3 seconds.
+ *
+ * When a move uncovers a new face-down tableau card, that card is NOT
+ * flipped face-up in the same round as the move. The move happens on
+ * one round (the newly-uncovered card still shown face-down), and the
+ * flip happens as its own, separate round right after.
  */
 public class SolitaireGame {
 
@@ -22,6 +29,10 @@ public class SolitaireGame {
     private final GameBoard board;
     private final Set<String> seenSignatures = new HashSet<>(); // stalemate safety net
     private final BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+
+    // a tableau column with a face-down card waiting to be flipped, one
+    // round from now - null when nothing is waiting
+    private Tableau pendingFlip = null;
 
     public SolitaireGame() {
         board = new GameBoard();
@@ -32,15 +43,26 @@ public class SolitaireGame {
     }
 
     public void run() {
-        System.out.println("Display Field");
+        System.out.println("OUTPUT(\"Display Field\")");
         board.displayField();
-        System.out.println("Press Enter for the next round");
-        System.out.println("(Each round pauses " + (ROUND_DELAY_MS / 1000) + " seconds - press Enter at any time to skip ahead.)");
+        System.out.println("(Each round pauses " + (ROUND_DELAY_MS / 1000) +
+                " seconds - press Enter at any time to skip ahead.)");
 
         while (true) {
             pauseForRound();
-            System.out.println("Display Game");
+            System.out.println("OUTPUT(Display Game)");
             board.displayField();
+
+            // if a card was uncovered last round, flip it now - as its
+            // own round, separate from whatever move uncovered it
+            if (pendingFlip != null) {
+                Tableau toFlip = pendingFlip;
+                pendingFlip = null;
+                toFlip.flipLastCard();
+                log("Flip: " + toFlip.lastCard() + " turned face-up in " + tableauLabel(toFlip));
+                System.out.println("OUTPUT(\"Display Game Results\")");
+                continue;
+            }
 
             if (foundationComparison()) {
                 continue;
@@ -54,6 +76,7 @@ public class SolitaireGame {
                 board.talon.loadFrom(board.waste);
                 board.waste.clear();
                 board.change = 0;
+                log("Recycle: Waste moved back into Talon");
                 continue;
             }
 
@@ -80,13 +103,13 @@ public class SolitaireGame {
     }
 
     // pauses up to ROUND_DELAY_MS, but returns immediately if the user
-    // presses Enter for the next round
+    // presses Enter during the wait
     private void pauseForRound() {
         long start = System.currentTimeMillis();
         try {
             while (System.currentTimeMillis() - start < ROUND_DELAY_MS) {
                 if (System.in.available() > 0) {
-                    consoleReader.readLine(); // Enter press
+                    consoleReader.readLine(); // consume the Enter press
                     break;
                 }
                 Thread.sleep(100);
@@ -94,6 +117,26 @@ public class SolitaireGame {
         } catch (IOException | InterruptedException ignored) {
             // if input isn't available in this environment, just fall through
         }
+    }
+
+    // prints a move/flip/draw log line in one consistent format
+    private void log(String message) {
+        System.out.println("LOG: " + message);
+    }
+
+    // "Tab3", or "Waste" if given null (used when a card's source was the waste pile)
+    private String tableauLabel(Tableau t) {
+        if (t == null) {
+            return "Waste";
+        }
+        int idx = board.tableaus.indexOf(t);
+        return idx >= 0 ? "Tab" + (idx + 1) : "Tableau";
+    }
+
+    // "AZ1"
+    private String foundationLabel(Foundation zone) {
+        int idx = board.foundationZones.indexOf(zone);
+        return idx >= 0 ? "AZ" + (idx + 1) : "Foundation";
     }
 
     private boolean foundationComparison() {
@@ -114,22 +157,24 @@ public class SolitaireGame {
             for (Foundation zone : board.foundationZones) {
                 if (zone.canAccept(visibleCard)) {
                     boolean fromWaste = (visibleCard == board.waste.lastCard());
+                    Tableau sourceTableau = fromWaste ? null : findTableauContaining(visibleCard);
+                    String sourceLabel = fromWaste ? "Waste" : tableauLabel(sourceTableau);
+                    String destLabel = foundationLabel(zone);
+
                     zone.append(visibleCard);
                     board.change = board.change + 1;
 
                     if (fromWaste) {
                         board.waste.removeLast();
-                    } else {
-                        Tableau sourceTableau = findTableauContaining(visibleCard);
-                        if (sourceTableau != null) {
-                            sourceTableau.removeStack(sourceTableau.visibleStackFrom(visibleCard));
-                            if (!sourceTableau.isEmpty() && !sourceTableau.lastCard().isVisible()) {
-                                sourceTableau.flipLastCard();
-                            }
+                    } else if (sourceTableau != null) {
+                        sourceTableau.removeStack(sourceTableau.visibleStackFrom(visibleCard));
+                        if (!sourceTableau.isEmpty() && !sourceTableau.lastCard().isVisible()) {
+                            // don't flip yet - that happens on its own round next
+                            pendingFlip = sourceTableau;
                         }
                     }
-                    System.out.println(" Move card to Fo" +
-                            "undation: " + visibleCard + " -> foundation");
+                    log("Move: " + visibleCard + " moved from " + sourceLabel +
+                            " to " + destLabel + " (foundation)");
                     return true;
                 }
             }
@@ -172,20 +217,24 @@ public class SolitaireGame {
                 }
 
                 if (valid) {
+                    String sourceLabel = fromWaste ? "Waste" : tableauLabel(sourceTableau);
+                    String destLabel = tableauLabel(destination);
+
                     if (fromWaste) {
                         destination.append(visibleCard);
                         board.waste.removeLast();
+                        log("Move: " + visibleCard + " moved from " + sourceLabel + " to " + destLabel);
                     } else {
                         List<Card> stack = sourceTableau.visibleStackFrom(visibleCard);
                         sourceTableau.removeStack(stack);
                         destination.appendStack(stack);
+                        log("Move: " + stack + " moved from " + sourceLabel + " to " + destLabel);
                         if (!sourceTableau.isEmpty() && !sourceTableau.lastCard().isVisible()) {
-                            sourceTableau.flipLastCard();
-                            System.out.println("Display Game Results");
+                            // don't flip yet - that happens on its own round next
+                            pendingFlip = sourceTableau;
                         }
                     }
                     board.change = board.change + 1;
-                    System.out.println("Tableau move: " + visibleCard + " -> tableau");
                     return true;
                 }
             }
@@ -194,14 +243,13 @@ public class SolitaireGame {
     }
 
     private void drawFromTalon() {
-        int drawn = 0;
-        while (drawn < 3 && !board.talon.isEmpty()) {
-            board.waste.addCard(board.talon.addTopCard());
-            drawn = drawn + 1;
+        List<Card> drawnCards = new ArrayList<>();
+        while (drawnCards.size() < 3 && !board.talon.isEmpty()) {
+            Card c = board.talon.addTopCard();
+            board.waste.addCard(c);
+            drawnCards.add(c);
         }
-        System.out.println("Change Made");
-        System.out.println("Display Field");
-        //board.displayField();
+        log("Draw: " + drawnCards + " drawn from Talon to Waste");
     }
 
     private boolean allComparisonsMade() {
@@ -277,13 +325,13 @@ public class SolitaireGame {
 
     private void declareResult() {
         if (allFoundationsComplete()) {
-            System.out.println("Winner");
-            System.out.println("13 Cards are in each Foundation");
-            System.out.println("Display Results");
+            System.out.println("OUTPUT(\"Winner\")");
+            System.out.println("OUTPUT(\"13 Cards are in each Foundation\")");
+            System.out.println("OUTPUT(\"Display Results\")");
         } else {
-            System.out.println("Lose");
-            System.out.println("No More Possible Moves");
-            System.out.println("Display Results");
+            System.out.println("OUTPUT(\"Lose\")");
+            System.out.println("OUTPUT(\"No More Possible Moves\")");
+            System.out.println("OUTPUT(\"Display Results\")");
         }
     }
 
@@ -309,6 +357,9 @@ public class SolitaireGame {
         }
         sb.append("talon:").append(board.talon.size());
         sb.append("waste:").append(board.waste.getCards().size());
+        // pendingFlip matters too - otherwise two states that only differ by
+        // "is a flip about to happen" would look identical to the stalemate check
+        sb.append("pendingFlip:").append(pendingFlip == null ? "no" : tableauLabel(pendingFlip));
         return sb.toString();
     }
 }

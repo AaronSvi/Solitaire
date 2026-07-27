@@ -14,7 +14,8 @@ import java.util.ArrayList;
  *     javac -d . cards/*.java zones/*.java engine/*.java Main.java WinTest.java
  *     java WinTest
  */
-public class WinTest {
+public class
+WinTest {
 
     public static void main(String[] args) {
         SolitaireGame game = new SolitaireGame();

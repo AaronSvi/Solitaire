@@ -81,12 +81,13 @@ public class GameBoard {
 
         // foundations, side by side in one row
         for (int i = 0; i < foundationZones.size(); i++) {
-            System.out.print(padVisible("Fou" + (i + 1), 10));
+            System.out.print(padVisible("Fondation" + (i + 1) + "  ", 10));
         }
         System.out.println();
         for (Foundation zone : foundationZones) {
             Card top = zone.topCard();
-            String text = (top == null ? "[ ]" : top.toString()) + "(" + zone.size() + ")";
+            String text = (top == null ? "[ ]" : top.toString()) + "(" + zone.size() + ")      ";
+            //String padded = String.format("%-20s");
             System.out.print(padVisible(text, 10));
         }
         System.out.println();

@@ -5,6 +5,7 @@ package cards;
  * the matching ANSI escape code used to print that color in a terminal.
  * Per project request: black suits print in GREEN in the terminal
  * (instead of black, which is invisible on a dark terminal background).
+ * Green will act as black
  */
 public enum Suit {
     HEARTS("♥", "RED"),

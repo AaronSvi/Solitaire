@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Waste.java
  * The face-up waste pile (previously named "Hand" - renamed per project
  * request), built by drawing three cards at a time from the talon.
  *
