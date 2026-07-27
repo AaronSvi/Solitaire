@@ -43,14 +43,14 @@ public class SolitaireGame {
     }
 
     public void run() {
-        System.out.println("OUTPUT(\"Display Field\")");
+        System.out.println("Display Field");
         board.displayField();
         System.out.println("(Each round pauses " + (ROUND_DELAY_MS / 1000) +
                 " seconds - press Enter at any time to skip ahead.)");
 
         while (true) {
             pauseForRound();
-            System.out.println("OUTPUT(Display Game)");
+            System.out.println("Display Game");
             board.displayField();
 
             // if a card was uncovered last round, flip it now - as its
@@ -59,8 +59,8 @@ public class SolitaireGame {
                 Tableau toFlip = pendingFlip;
                 pendingFlip = null;
                 toFlip.flipLastCard();
-                log("Flip: " + toFlip.lastCard() + " turned face-up in " + tableauLabel(toFlip));
-                System.out.println("OUTPUT(\"Display Game Results\")");
+                log("Flip: " + /*toFlip.lastCard()*/ "FaceDown Card" + " turned face-up in " + tableauLabel(toFlip));
+                System.out.println("Display Game Results");
                 continue;
             }
 
@@ -136,7 +136,7 @@ public class SolitaireGame {
     // "AZ1"
     private String foundationLabel(Foundation zone) {
         int idx = board.foundationZones.indexOf(zone);
-        return idx >= 0 ? "AZ" + (idx + 1) : "Foundation";
+        return idx >= 0 ? "Foudation" + "" + (idx + 1) : "Foundation";
     }
 
     private boolean foundationComparison() {
@@ -174,7 +174,7 @@ public class SolitaireGame {
                         }
                     }
                     log("Move: " + visibleCard + " moved from " + sourceLabel +
-                            " to " + destLabel + " (foundation)");
+                            " to " + destLabel);
                     return true;
                 }
             }
@@ -325,13 +325,13 @@ public class SolitaireGame {
 
     private void declareResult() {
         if (allFoundationsComplete()) {
-            System.out.println("OUTPUT(\"Winner\")");
-            System.out.println("OUTPUT(\"13 Cards are in each Foundation\")");
-            System.out.println("OUTPUT(\"Display Results\")");
+            System.out.println("Winner");
+            System.out.println("13 Cards are in each Foundation");
+            System.out.println("Display Results");
         } else {
-            System.out.println("OUTPUT(\"Lose\")");
-            System.out.println("OUTPUT(\"No More Possible Moves\")");
-            System.out.println("OUTPUT(\"Display Results\")");
+            System.out.println("Lose");
+            System.out.println("No More Possible Moves");
+            System.out.println("Display Results");
         }
     }
 
