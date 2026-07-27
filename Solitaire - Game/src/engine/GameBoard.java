@@ -112,7 +112,7 @@ public class GameBoard {
             System.out.println();
         }
 
-        System.out.println();
+        //System.out.println();
 
         // waste pile: 3 at ta time
         System.out.print("waste (top 3): ");

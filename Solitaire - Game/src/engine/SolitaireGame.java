@@ -61,7 +61,7 @@ public class SolitaireGame {
                 toFlip.flipLastCard();
                 log( /*toFlip.lastCard()*/ "Last face down card is flip up in " +
                           tableauLabel(toFlip));
-                System.out.println("Display Game Results");
+                //System.out.println("Display Game Results");
                 continue;
             }
 
