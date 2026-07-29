@@ -45,7 +45,7 @@ public class Foundation {
         return content.size();
     }
 
-    public List<Card> getContent() {
-        return content;
-    }
+   // public List<Card> getContent() {
+        //return content;
+    //}
 }

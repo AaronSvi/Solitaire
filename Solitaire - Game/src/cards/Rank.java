@@ -36,13 +36,13 @@ public enum Rank {
         return symbol;
     }
 
-    public boolean isAce() {
-        return value == 1;
-    }
+   // public boolean isAce() {
+     //   return value == 1;
+   // }
 
-    public boolean isKing() {
-        return value == 13;
-    }
+   // public boolean isKing() {
+   //     return value == 13;
+    //}
 
     public static Rank fromValue(int value) {
         for (Rank r : values()) {
