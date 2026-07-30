@@ -78,7 +78,6 @@ public class SolitaireGame {
                 pendingFlip = null;
                 toFlip.flipLastCard();
                 log("Last face down card is turned face-up in " + tableauLabel(toFlip));
-              //  System.out.println("OUTPUT(\"Display Game Results\")");
                 continue;
             }
 
@@ -150,7 +149,7 @@ public class SolitaireGame {
     // prints a move/flip/draw log line in one consistent format
     private void log(String message) {
         System.out.println("LOG: " + message);
-        System.out.println("=========================================================");
+        System.out.println("---------------------------------------------------------");
         System.out.println();
     }
 
