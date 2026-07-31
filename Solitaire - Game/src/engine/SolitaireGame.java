@@ -118,12 +118,6 @@ public class SolitaireGame {
                 declareResult();
                 break;
             }
-            String signature = computeBoardSignature();
-            if (!seenSignatures.add(signature)) {
-                declareResult();
-                break;
-            }
-            continue;
         }
 
         board.displayField();
@@ -406,21 +400,5 @@ public class SolitaireGame {
         return null;
     }
 
-    private String computeBoardSignature() {
-        StringBuilder sb = new StringBuilder();
-        for (Tableau t : board.tableaus) {
-            for (Card c : t.getContent()) {
-                sb.append(c.getValue()).append(c.getSuit()).append(c.isVisible() ? "1" : "0");
-            }
-            sb.append("|");
-        }
-        for (Foundation zone : board.foundationZones) {
-            sb.append(zone.size()).append(",");
-        }
-        sb.append("talon:").append(board.talon.size());
-        sb.append("waste:").append(board.waste.getCards().size());
-        sb.append("pendingFlip:").append(pendingFlip == null ? "no" : tableauLabel(pendingFlip));
-        sb.append("progressSinceRecycle:").append(progressSinceRecycle);
-        return sb.toString();
-    }
+
 }

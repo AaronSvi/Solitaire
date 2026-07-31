@@ -15,8 +15,7 @@ import java.util.List;
  */
 public class GameBoard {
 
-    //public static final int ACE_ZONE_VALUE = 0;
-    //public static final int KINGZONE_VALUE = 14;
+
     public final int tableau_count = 7;
     public final int foundation_zone = 4;
     public int change = 0;
@@ -100,7 +99,7 @@ public class GameBoard {
             Card top = zone.topCard();
             String text = (top == null ? "[ ]" : top.toString()) + "(" + zone.size() + ")      ";
             //String padded = String.format("%-20s");
-            System.out.print(padVisible(text, 10));
+            System.out.print(padVisible(text, 12));
         }
         System.out.println();
         System.out.println();

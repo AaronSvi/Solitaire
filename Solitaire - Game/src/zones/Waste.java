@@ -47,11 +47,6 @@ public class Waste {
         return waste;
     }
 
-    // only the last up-to-3 cards - this is what should be shown on screen
-   // public List<Card> recentCards() {
-     //   int from = Math.max(0, waste.size() - 3);
-       // return new ArrayList<>(waste.subList(from, waste.size()));
-    //}
 
     public void clear() {
         waste.clear();
