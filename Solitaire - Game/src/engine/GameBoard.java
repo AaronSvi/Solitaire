@@ -8,11 +8,7 @@ import zones.Waste;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * GameBoard.java
- * Holds the full board state and performs the initial setup: build the
- * foundations, build the tableau columns, and deal the cards.
- */
+
 public class GameBoard {
 
 

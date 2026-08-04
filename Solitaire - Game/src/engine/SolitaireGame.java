@@ -11,44 +11,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * SolitaireGame.java
- * The auto-play engine. Each round pauses for 3 seconds so the moves can
- * actually be watched - press Enter at any point during that pause to
- * skip ahead immediately instead of waiting out the full 3 seconds.
- *
- * When a move uncovers a new face-down tableau card, that card is NOT
- * flipped face-up in the same round as the move. The move happens on
- * one round (the newly-uncovered card still shown face-down), and the
- * flip happens as its own, separate round right after.
- *
- * WASTE RULE: right after drawing, the new top-of-waste card gets exactly
- * ONE chance to be played (foundation checked first, then tableau). Once
- * that one check happens - whether it succeeds or not - the waste is
- * locked out and ignored until the NEXT draw, even if playing it exposed
- * another card underneath. Foundation/tableau comparisons in between only
- * ever look at tableau columns, never the waste.
- */
+
 public class SolitaireGame {
 
     private static final int ROUND_DELAY_MS = 3000;
 
     private final GameBoard board;
-    private final Set<String> seenSignatures = new HashSet<>(); // stalemate safety net
     private final BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
 
-    // a tableau column with a face-down card waiting to be flipped, one
-    // round from now - null when nothing is waiting
+
     private Tableau pendingFlip = null;
 
-    // true if ANY move has happened since the last recycle (or the start
-    // of the game) - separate from board.change, which only tracks
-    // progress since the last DRAW and gets reset every time a new
-    // batch of 3 is drawn.
+
     private boolean progressSinceRecycle = false;
 
-    // true for exactly one round right after a draw - gives the new
-    // waste top card its single, one-time chance to be played
+
     private boolean checkWasteThisRound = false;
 
     public SolitaireGame() {
@@ -58,8 +35,7 @@ public class SolitaireGame {
 
     public void run() {
 
-        // System.out.println("Display Field");
-        //board.displayField();
+
         System.out.println("(Each round pauses " + (ROUND_DELAY_MS / 1000) +
                 " seconds - press Enter at any time to skip ahead.)");
 
@@ -68,8 +44,7 @@ public class SolitaireGame {
             System.out.println("Display Game");
             board.displayField();
 
-            // if a card was uncovered last round, flip it now - as its
-            // own round, separate from whatever move uncovered it
+
             if (pendingFlip != null) {
                 Tableau toFlip = pendingFlip;
                 pendingFlip = null;
@@ -78,8 +53,7 @@ public class SolitaireGame {
                 continue;
             }
 
-            // the waste's one-time chance to play, right after a draw -
-            // consumed here whether or not it actually plays
+
             if (checkWasteThisRound) {
                 checkWasteThisRound = false;
                 if (tryWasteMove()) {
@@ -109,7 +83,7 @@ public class SolitaireGame {
                 continue;
             }
 
-            // END GAME CHECK
+
             board.change = 0;
             if (!progressPossible()) {
                 declareResult();
@@ -120,8 +94,7 @@ public class SolitaireGame {
         board.displayField();
     }
 
-    // pauses up to ROUND_DELAY_MS, but returns immediately if the user
-    // presses Enter during the wait
+
     private void pauseForRound() {
         long start = System.currentTimeMillis();
         try {
@@ -133,18 +106,16 @@ public class SolitaireGame {
                 Thread.sleep(100);
             }
         } catch (IOException | InterruptedException ignored) {
-            // if input isn't available in this environment, just fall through
         }
     }
 
-    // prints a move/flip/draw log line in one consistent format
     private void log(String message) {
         System.out.println("LOG: " + message);
         System.out.println("---------------------------------------------------------");
 
     }
 
-    // "Tab3"
+
     private String tableauLabel(Tableau t) {
         if (t == null) {
             return "Tableau";
@@ -153,14 +124,13 @@ public class SolitaireGame {
         return idx >= 0 ? "Tableau" + (idx + 1) : "Tableau";
     }
 
-    // "AZ1"
+
     private String foundationLabel(Foundation zone) {
         int idx = board.foundationZones.indexOf(zone);
         return idx >= 0 ? "Foundation" + (idx + 1) : "Foundation";
     }
 
-    // the waste's one-time play attempt, right after a draw: foundation
-    // checked first across all 4, then every tableau column
+
     private boolean tryWasteMove() {
         Card visibleCard = board.waste.lastCard();
         if (visibleCard == null || !visibleCard.isVisible()) {
@@ -200,8 +170,7 @@ public class SolitaireGame {
         return false;
     }
 
-    // foundation moves sourced ONLY from tableau columns - the waste is
-    // handled separately by tryWasteMove(), once per draw
+
     private boolean foundationComparison() {
         List<Card> candidates = new ArrayList<>();
         for (Tableau t : board.tableaus) {
@@ -240,8 +209,7 @@ public class SolitaireGame {
         return false;
     }
 
-    // tableau-to-tableau moves ONLY - the waste is handled separately by
-    // tryWasteMove(), once per draw
+
     private boolean tableauComparison() {
         List<Card> candidates = new ArrayList<>();
         for (Tableau t : board.tableaus) {
@@ -302,15 +270,12 @@ public class SolitaireGame {
             drawnCards.add(c);
         }
         if (!drawnCards.isEmpty()) {
-            checkWasteThisRound = true; // the new top card gets its one-time check next round
+            checkWasteThisRound = true;
         }
         log("Draw: " + drawnCards + " drawn from Talon to Waste");
     }
 
-    // NOTE: these now only check tableau-sourced moves, matching the
-    // scope of foundationComparison()/tableauComparison() above. The
-    // waste is intentionally excluded - it only gets checked once, right
-    // after a draw, via tryWasteMove().
+
     private boolean allComparisonsMade() {
         return !hasFoundationMove() && !hasTableauMove();
     }

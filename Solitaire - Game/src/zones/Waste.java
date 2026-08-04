@@ -4,14 +4,7 @@ import cards.Card;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The face-up waste pile (previously named "Hand" - renamed per project
- * request), built by drawing three cards at a time from the talon.
- *
- * Only the most recently drawn cards (up to 3) are ever shown to the
- * player, matching real Klondike: the rest of the pile is still there
- * underneath, but visually fanned-out only 3 cards deep.
- */
+
 public class Waste {
 
     private final List<Card> waste;

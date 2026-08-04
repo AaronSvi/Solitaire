@@ -24,7 +24,6 @@ public class Tableau {
         return content.get(content.size() - 1);
     }
 
-    // the first face-up card in the column
     public Card bottomVisibleCard() {
         for (Card c : content) {
             if (c.isVisible()) {
