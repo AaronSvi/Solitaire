@@ -30,7 +30,7 @@ public class GameBoard {
     }
 
     private void createFoundation() {
-        area = 1;
+
         while (area <= foundation_zone) {
             foundationZones.add(new Foundation());
             area = area + 1;
@@ -38,10 +38,10 @@ public class GameBoard {
     }
 
     private void createTableau() {
-        int area1 = 1;
-        while (area1 <= tableau_count) {
+         area = 1;
+        while (area <= tableau_count) {
             tableaus.add(new Tableau());
-            area1 = area1 + 1;
+            area = area + 1;
         }
     }
 
@@ -59,9 +59,6 @@ public class GameBoard {
         }
     }
 
-    // ANSI color codes make cards print with invisible escape characters,
-    // which throws off simple %-Ns padding. This pads based on the VISIBLE
-    // length only, so columns still line up neatly in the terminal.
     private static String padVisible(String text, int width) {
         String visibleOnly = text.replaceAll("\u001B\\[[0-9;]*m", "");
         StringBuilder sb = new StringBuilder(text);
@@ -74,7 +71,7 @@ public class GameBoard {
     public void displayField() {
         System.out.println("---------------------------------------------------------");
 
-        // waste pile
+
         System.out.print("waste: ");
         for (Card c : waste.getCards()) {
             System.out.print(padVisible(c.toString(), 5));
@@ -86,7 +83,6 @@ public class GameBoard {
 
 
 
-        // foundations, side by side in one row
         for (int i = 0; i < foundationZones.size(); i++) {
             System.out.print(padVisible("Fondation" + (i + 1) + "  ", 10));
         }
@@ -94,13 +90,11 @@ public class GameBoard {
         for (Foundation zone : foundationZones) {
             Card top = zone.topCard();
             String text = (top == null ? "[ ]" : top.toString()) + "(" + zone.size() + ")      ";
-            //String padded = String.format("%-20s");
             System.out.print(padVisible(text, 12));
         }
         System.out.println();
         System.out.println();
 
-        // tableau columns, side by side, cards going down each column
         for (int i = 0; i < tableaus.size(); i++) {
             System.out.print(padVisible("Tableau" + (i + 1), 10));
         }
@@ -119,14 +113,6 @@ public class GameBoard {
             System.out.println();
         }
 
-        // waste pile
-        //System.out.print("waste: ");
-       // for (Card c : waste.getCards()) {
-         //   System.out.print(padVisible(c.toString(), 5));
-        //}
-       // System.out.println();
-
-        //System.out.println("talon: " + talon.size() + " cards remaining");
         System.out.println("---------------------------------------------------------");
     }
 }

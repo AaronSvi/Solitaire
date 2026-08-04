@@ -15,17 +15,10 @@ import java.util.Set;
 public class SolitaireGame {
 
     private static final int ROUND_DELAY_MS = 3000;
-
     private final GameBoard board;
     private final BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
-
-
     private Tableau pendingFlip = null;
-
-
     private boolean progressSinceRecycle = false;
-
-
     private boolean checkWasteThisRound = false;
 
     public SolitaireGame() {
