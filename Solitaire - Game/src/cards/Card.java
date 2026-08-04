@@ -1,9 +1,6 @@
 package cards;
 
-/**
- * Card.java
- * Represents a single playing card. when a card is visible it shows the value and color
- */
+
 public class Card {
 
     private final Rank rank;

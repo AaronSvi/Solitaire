@@ -1,10 +1,6 @@
 package cards;
 
-/**
- *
- * The thirteen card ranks. Each constant carries its numeric value
- * (1..13) plus the short symbol used when printing a card (A, 2-10, J, Q, K).
- */
+
 public enum Rank {
     ACE(1, "A"),
     TWO(2, "2"),
