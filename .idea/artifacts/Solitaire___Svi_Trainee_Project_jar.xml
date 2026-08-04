@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Solitaire---Svi-Trainee-Project:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Solitaire___Svi_Trainee_Project_jar</output-path>
+    <root id="archive" name="Solitaire---Svi-Trainee-Project.jar">
+      <element id="module-output" name="Solitaire---Svi-Trainee-Project" />
+    </root>
+  </artifact>
+</component>
