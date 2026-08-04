@@ -55,9 +55,6 @@ public class SolitaireGame {
         board = new GameBoard();
     }
 
-    public GameBoard getBoard() {
-        return board;
-    }
 
     public void run() {
 
