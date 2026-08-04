@@ -4,11 +4,7 @@ import cards.Card;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * One of the four foundation piles. Each pile is built up in one suit,
- * starting at an Ace (value 1) and ending at a King (value 13).
- */
+
 public class Foundation {
 
     private final List<Card> content;
@@ -26,7 +22,7 @@ public class Foundation {
 
     public boolean canAccept(Card card) {
         if (content.isEmpty()) {
-            return card.getValue() == 1; // Ace lang
+            return card.getValue() == 1;
         }
         Card top = topCard();
         return card.getSuit() == top.getSuit() && card.getValue() == top.getValue() + 1;
@@ -45,7 +41,4 @@ public class Foundation {
         return content.size();
     }
 
-   // public List<Card> getContent() {
-        //return content;
-    //}
 }

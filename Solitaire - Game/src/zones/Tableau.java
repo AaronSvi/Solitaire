@@ -4,10 +4,7 @@ import cards.Card;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * seven tableau columns
- * Only a King may start an empty column.
- */
+
 public class Tableau {
 
     private final List<Card> content;
@@ -28,7 +25,6 @@ public class Tableau {
     }
 
     // the first face-up card in the column
-    // the movable, visible run
     public Card bottomVisibleCard() {
         for (Card c : content) {
             if (c.isVisible()) {
@@ -38,8 +34,7 @@ public class Tableau {
         return null;
     }
 
-    // the whole face-up run starting at startCard, used when a stack of
-    // cards is moved together
+    // can move stack
     public List<Card> visibleStackFrom(Card startCard) {
         List<Card> stack = new ArrayList<>();
         boolean collecting = false;

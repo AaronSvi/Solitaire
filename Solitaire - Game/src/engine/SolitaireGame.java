@@ -144,7 +144,7 @@ public class SolitaireGame {
     private void log(String message) {
         System.out.println("LOG: " + message);
         System.out.println("---------------------------------------------------------");
-        System.out.println();
+
     }
 
     // "Tab3"
@@ -153,7 +153,7 @@ public class SolitaireGame {
             return "Tableau";
         }
         int idx = board.tableaus.indexOf(t);
-        return idx >= 0 ? "Tab" + (idx + 1) : "Tableau";
+        return idx >= 0 ? "Tableau" + (idx + 1) : "Tableau";
     }
 
     // "AZ1"
@@ -381,13 +381,9 @@ public class SolitaireGame {
 
     private void declareResult() {
         if (allFoundationsComplete()) {
-            System.out.println("Winner");
-            System.out.println("13 Cards are in each Foundation");
-            System.out.println("Display Results");
+            System.out.println("You Win!");
         } else {
-            System.out.println("Lose");
-            System.out.println("No More Possible Moves");
-            System.out.println("Display Results");
+            System.out.println("No more moves — You Lose!");
         }
     }
 

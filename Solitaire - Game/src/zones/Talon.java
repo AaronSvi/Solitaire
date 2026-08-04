@@ -7,11 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Talon.java
- * The face-down stock pile (previously named "Deck" - renamed per
- * project request).
- */
+
 public class Talon {
 
     private final List<Card> talon;
@@ -44,7 +40,7 @@ public class Talon {
         return talon.size();
     }
 
-    // RECYCLE TALON: the waste pile becomes the new talon
+    // reuse waste to talon when the talon is 
     public void loadFrom(Waste waste) {
         talon.clear();
         talon.addAll(waste.getCards());
