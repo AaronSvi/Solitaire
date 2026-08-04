@@ -40,7 +40,7 @@ public class Talon {
         return talon.size();
     }
 
-    // reuse waste to talon when the talon is 
+    // reuse waste to talon when the talon is 0
     public void loadFrom(Waste waste) {
         talon.clear();
         talon.addAll(waste.getCards());
