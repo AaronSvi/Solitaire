@@ -7,9 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public class SolitaireGame {
@@ -62,26 +60,26 @@ public class SolitaireGame {
                 continue;
             }
 
-            if (board.talon.isEmpty() && progressSinceRecycle) {
+            if (!board.talon.isEmpty() || !progressSinceRecycle) {
+                if (!board.talon.isEmpty() && allComparisonsMade() && board.change == 0) {
+                    drawFromTalon();
+                    continue;
+                }
+
+
+                board.change = 0;
+                if (!progressPossible()) {
+                    declareResult();
+                    break;
+                }
+            } else {
                 board.talon.loadFrom(board.waste);
                 board.waste.clear();
                 board.change = 0;
                 progressSinceRecycle = false;
                 log("Recycle: Waste moved back into Talon");
-                continue;
             }
 
-            if (!board.talon.isEmpty() && allComparisonsMade() && board.change == 0) {
-                drawFromTalon();
-                continue;
-            }
-
-
-            board.change = 0;
-            if (!progressPossible()) {
-                declareResult();
-                break;
-            }
         }
 
         board.displayField();
@@ -113,7 +111,7 @@ public class SolitaireGame {
         if (t == null) {
             return "Tableau";
         }
-        int idx = board.tableaus.indexOf(t);
+        int idx = board.tableau.indexOf(t);
         return idx >= 0 ? "Tableau" + (idx + 1) : "Tableau";
     }
 
@@ -141,7 +139,7 @@ public class SolitaireGame {
             }
         }
 
-        for (Tableau destination : board.tableaus) {
+        for (Tableau destination : board.tableau) {
             Card destTop = destination.lastCard();
             boolean valid;
             if (destTop == null) {
@@ -166,7 +164,7 @@ public class SolitaireGame {
 
     private boolean foundationComparison() {
         List<Card> candidates = new ArrayList<>();
-        for (Tableau t : board.tableaus) {
+        for (Tableau t : board.tableau) {
             if (!t.isEmpty()) {
                 candidates.add(t.lastCard());
             }
@@ -177,26 +175,27 @@ public class SolitaireGame {
                 continue;
             }
             for (Foundation zone : board.foundationZones) {
-                if (zone.canAccept(visibleCard)) {
-                    Tableau sourceTableau = findTableauContaining(visibleCard);
-                    String sourceLabel = tableauLabel(sourceTableau);
-                    String destLabel = foundationLabel(zone);
-
-                    zone.append(visibleCard);
-                    board.change = board.change + 1;
-                    progressSinceRecycle = true;
-
-                    if (sourceTableau != null) {
-                        sourceTableau.removeStack(sourceTableau.visibleStackFrom(visibleCard));
-                        if (!sourceTableau.isEmpty() && !sourceTableau.lastCard().isVisible()) {
-                            // don't flip yet - that happens on its own round next
-                            pendingFlip = sourceTableau;
-                        }
-                    }
-                    log("Move: " + visibleCard + " moved from " + sourceLabel +
-                            " to " + destLabel);
-                    return true;
+                if (!zone.canAccept(visibleCard)) {
+                    continue;
                 }
+                Tableau sourceTableau = findTableauContaining(visibleCard);
+                String sourceLabel = tableauLabel(sourceTableau);
+                String destLabel = foundationLabel(zone);
+
+                zone.append(visibleCard);
+                board.change = board.change + 1;
+                progressSinceRecycle = true;
+
+                if (sourceTableau != null) {
+                    sourceTableau.removeStack(sourceTableau.visibleStackFrom(visibleCard));
+                    if (!sourceTableau.isEmpty() && !sourceTableau.lastCard().isVisible()) {
+                        // don't flip yet - that happens on its own round next
+                        pendingFlip = sourceTableau;
+                    }
+                }
+                log("Move: " + visibleCard + " moved from " + sourceLabel +
+                        " to " + destLabel);
+                return true;
             }
         }
         return false;
@@ -205,7 +204,7 @@ public class SolitaireGame {
 
     private boolean tableauComparison() {
         List<Card> candidates = new ArrayList<>();
-        for (Tableau t : board.tableaus) {
+        for (Tableau t : board.tableau) {
             Card bottomVisible = t.bottomVisibleCard();
             if (bottomVisible != null) {
                 candidates.add(bottomVisible);
@@ -215,7 +214,7 @@ public class SolitaireGame {
         for (Card visibleCard : candidates) {
             Tableau sourceTableau = findTableauContaining(visibleCard);
 
-            for (Tableau destination : board.tableaus) {
+            for (Tableau destination : board.tableau) {
                 if (destination == sourceTableau) {
                     continue;
                 }
@@ -233,23 +232,24 @@ public class SolitaireGame {
                             && visibleCard.getValue() == destTop.getValue() - 1;
                 }
 
-                if (valid) {
-                    String sourceLabel = tableauLabel(sourceTableau);
-                    String destLabel = tableauLabel(destination);
-
-                    List<Card> stack = sourceTableau.visibleStackFrom(visibleCard);
-                    sourceTableau.removeStack(stack);
-                    destination.appendStack(stack);
-                    log("Move: " + stack + " moved from " + sourceLabel + " to " + destLabel);
-                    if (!sourceTableau.isEmpty() && !sourceTableau.lastCard().isVisible()) {
-                        // don't flip yet - that happens on its own round next
-                        pendingFlip = sourceTableau;
-                    }
-
-                    board.change = board.change + 1;
-                    progressSinceRecycle = true;
-                    return true;
+                if (!valid) {
+                    continue;
                 }
+                String sourceLabel = tableauLabel(sourceTableau);
+                String destLabel = tableauLabel(destination);
+
+                List<Card> stack = sourceTableau.visibleStackFrom(visibleCard);
+                sourceTableau.removeStack(stack);
+                destination.appendStack(stack);
+                log("Move: " + stack + " moved from " + sourceLabel + " to " + destLabel);
+                if (!sourceTableau.isEmpty() && !sourceTableau.lastCard().isVisible()) {
+                    // don't flip yet - that happens on its own round next
+                    pendingFlip = sourceTableau;
+                }
+
+                board.change = board.change + 1;
+                progressSinceRecycle = true;
+                return true;
             }
         }
         return false;
@@ -275,7 +275,7 @@ public class SolitaireGame {
 
     private boolean hasFoundationMove() {
         List<Card> candidates = new ArrayList<>();
-        for (Tableau t : board.tableaus) {
+        for (Tableau t : board.tableau) {
             if (!t.isEmpty() && t.lastCard().isVisible()) {
                 candidates.add(t.lastCard());
             }
@@ -292,7 +292,7 @@ public class SolitaireGame {
 
     private boolean hasTableauMove() {
         List<Card> candidates = new ArrayList<>();
-        for (Tableau t : board.tableaus) {
+        for (Tableau t : board.tableau) {
             Card bottomVisible = t.bottomVisibleCard();
             if (bottomVisible != null) {
                 candidates.add(bottomVisible);
@@ -300,7 +300,7 @@ public class SolitaireGame {
         }
         for (Card c : candidates) {
             Tableau source = findTableauContaining(c);
-            for (Tableau destination : board.tableaus) {
+            for (Tableau destination : board.tableau) {
                 if (destination == source) {
                     continue;
                 }
@@ -343,7 +343,7 @@ public class SolitaireGame {
     }
 
     private Tableau findTableauContaining(Card card) {
-        for (Tableau t : board.tableaus) {
+        for (Tableau t : board.tableau) {
             if (t.getContent().contains(card)) {
                 return t;
             }

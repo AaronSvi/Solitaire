@@ -29,7 +29,7 @@ public class Talon {
         if (talon.isEmpty()) {
             return null;
         }
-        return talon.remove(talon.size() - 1);
+        return talon.removeLast();
     }
 
     public boolean isEmpty() {
@@ -47,9 +47,5 @@ public class Talon {
         for (Card c : talon) {
             c.setVisible(false);
         }
-    }
-
-    public List<Card> getCards() {
-        return talon;
     }
 }

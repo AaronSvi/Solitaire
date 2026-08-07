@@ -17,7 +17,7 @@ public class Foundation {
         if (content.isEmpty()) {
             return null;
         }
-        return content.get(content.size() - 1);
+        return content.getLast();
     }
 
     public boolean canAccept(Card card) {

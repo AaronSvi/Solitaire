@@ -17,14 +17,14 @@ public class Waste {
         if (waste.isEmpty()) {
             return null;
         }
-        return waste.remove(waste.size() - 1);
+        return waste.removeLast();
     }
 
     public Card lastCard() {
         if (waste.isEmpty()) {
             return null;
         }
-        return waste.get(waste.size() - 1);
+        return waste.getLast();
     }
 
     public void addCard(Card card) {

@@ -21,7 +21,7 @@ public class Tableau {
         if (content.isEmpty()) {
             return null;
         }
-        return content.get(content.size() - 1);
+        return content.getLast();
     }
 
     public Card bottomVisibleCard() {
